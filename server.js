@@ -35,10 +35,28 @@ app.post('/api/send', async (req, res) => {
   try {
     const url = `https://${config.server}/mobile/v1`;
     console.log('Sending SMS to:', url, { recipients, message });
+    const body = {
+      deviceId: process.env.DEVICE_ID || config.username, // Assuming deviceId is username
+      id: Date.now().toString(),
+      isEncrypted: false,
+      message: message,
+      phoneNumbers: recipients,
+      priority: 0,
+      simNumber: 1,
+      textMessage: {
+        text: message
+      },
+      ttl: 86400,
+      validUntil: "2025-12-31T00:00:00Z",
+      withDeliveryReport: true
+    };
     const response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: config.username, password: config.password, recipients, message }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(config.username + ':' + config.password).toString('base64')
+      },
+      body: JSON.stringify(body),
     });
     const result = await response.text();
     console.log('SMS response:', response.status, result);
