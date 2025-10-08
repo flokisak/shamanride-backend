@@ -38,8 +38,8 @@ app.post('/api/send', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: config.username, password: config.password, recipients, message }),
     });
-    const result = await response.json();
-    res.json(result);
+    const result = await response.text();
+    res.json({ success: response.ok, data: result });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
