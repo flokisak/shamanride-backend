@@ -21,7 +21,7 @@ app.post('/api/config', (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/api/send', async (req, res) => {
+app.post('/api/send-sms', async (req, res) => {
   const { recipients, message } = req.body;
   const config = {
     server: process.env.SMS_SERVER,
@@ -36,19 +36,11 @@ app.post('/api/send', async (req, res) => {
     const url = `https://${config.server}/mobile/v1`;
     console.log('Sending SMS to:', url, { recipients, message });
     const body = {
-      deviceId: process.env.DEVICE_ID || config.username, // Assuming deviceId is username
-      id: Date.now().toString(),
-      isEncrypted: false,
-      message: message,
+      deviceId: process.env.DEVICE_ID || config.username,
       phoneNumbers: recipients,
-      priority: 0,
-      simNumber: 1,
       textMessage: {
         text: message
-      },
-      ttl: 86400,
-      validUntil: "2025-12-31T00:00:00Z",
-      withDeliveryReport: true
+      }
     };
     const response = await fetch(url, {
       method: 'POST',
