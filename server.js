@@ -33,7 +33,7 @@ app.post('/api/send-sms', async (req, res) => {
     return res.status(500).json({ success: false, error: 'SMS gate not configured' });
   }
   try {
-    const url = `https://${config.server}/`;
+    const url = `https://${config.server}/v1/send`;
     console.log('Sending SMS to:', url, { recipients, message });
     const body = {
       deviceId: process.env.DEVICE_ID || config.username,
